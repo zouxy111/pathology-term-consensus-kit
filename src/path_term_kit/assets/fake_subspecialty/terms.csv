@@ -1,0 +1,6 @@
+family_id,category,standard_name,source_basis,compatible_names,deprecated_or_discuss,patterns,priority,decision_question
+T001,癌前病变,低级别上皮内瘤变,演示术语源,低级别异型增生,轻度不典型增生,低级别上皮内瘤变|低级别异型增生|轻度不典型增生,main,是否统一采用“低级别上皮内瘤变”？
+T002,癌前病变,高级别上皮内瘤变,演示术语源,高级别异型增生,重度不典型增生,高级别上皮内瘤变|高级别异型增生|重度不典型增生,main,是否统一采用“高级别上皮内瘤变”？
+T003,肿瘤分类,低黏附性癌,演示术语源,印戒细胞癌,弥漫型癌,低黏附性癌|印戒细胞癌|弥漫型癌,main,低黏附性癌与印戒细胞癌如何兼容？
+T004,附录,神经内分泌肿瘤,演示术语源,NET,类癌,神经内分泌肿瘤|NET|类癌,appendix,NET 是否仅作为附录收集？
+

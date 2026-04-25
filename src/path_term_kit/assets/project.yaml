@@ -1,0 +1,48 @@
+project:
+  name: "TODO-亚专科术语标准化项目"
+  subspecialty: "TODO-亚专科名称"
+
+inputs:
+  term_catalog: "data/terms.csv"
+  reports:
+    - path: "data/reports.csv"
+      expected_rows: null
+      label: "历史报告导出"
+
+field_mapping:
+  company_field: "最终检测子公司"
+  report_text_field: "单一结果"
+  context_fields:
+    - "诊断"
+    - "送检材料"
+    - "标本类型"
+
+companies:
+  - "广州"
+  - "济南"
+  - "四川"
+  - "南京"
+  - "郑州"
+  - "长沙"
+
+target_filter:
+  include_terms:
+    - "TODO-目标器官关键词"
+  exclude_terms:
+    - "TODO-排除器官关键词"
+  text_split_pattern: "\\n|；|;|\\r"
+  allow_empty_include_terms: false
+
+privacy:
+  extra_patterns: []
+
+outputs:
+  output_dir: "outputs"
+  evidence_workbook: "evidence.xlsx"
+  questionnaire_workbook: "questionnaire.xlsx"
+  deck_outline_md: "deck_outline.md"
+  deck_outline_html: "deck_outline.html"
+  run_manifest: "run_manifest.json"
+  privacy_report: "privacy_report.json"
+  scan_log: "scan_log.csv"
+

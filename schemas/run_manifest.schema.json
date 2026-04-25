@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Run manifest",
+  "type": "object",
+  "required": ["project", "subspecialty", "status", "generated_at", "data_gate", "outputs"],
+  "properties": {
+    "project": { "type": "string" },
+    "subspecialty": { "type": "string" },
+    "status": { "type": "string", "enum": ["pass", "fail"] },
+    "generated_at": { "type": "string" },
+    "data_gate": { "type": "object" },
+    "outputs": { "type": "object" },
+    "privacy": { "type": "object" }
+  }
+}
+

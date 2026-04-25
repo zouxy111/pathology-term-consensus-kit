@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Term catalog row",
+  "type": "object",
+  "required": [
+    "family_id",
+    "category",
+    "standard_name",
+    "source_basis",
+    "compatible_names",
+    "deprecated_or_discuss",
+    "patterns",
+    "priority",
+    "decision_question"
+  ],
+  "properties": {
+    "family_id": { "type": "string" },
+    "category": { "type": "string" },
+    "standard_name": { "type": "string" },
+    "source_basis": { "type": "string" },
+    "compatible_names": { "type": "string" },
+    "deprecated_or_discuss": { "type": "string" },
+    "patterns": { "type": "string" },
+    "priority": { "type": "string" },
+    "decision_question": { "type": "string" }
+  }
+}
+

@@ -1,0 +1,52 @@
+project:
+  name: "假数据消化道术语标准化演示"
+  subspecialty: "消化道假亚专科"
+
+inputs:
+  term_catalog: "terms.csv"
+  reports:
+    - path: "reports.csv"
+      expected_rows: 8
+      label: "fake reports"
+
+field_mapping:
+  company_field: "最终检测子公司"
+  report_text_field: "单一结果"
+  context_fields:
+    - "诊断"
+    - "送检材料"
+
+companies:
+  - "广州"
+  - "济南"
+  - "四川"
+  - "南京"
+  - "郑州"
+  - "长沙"
+
+target_filter:
+  include_terms:
+    - "胃"
+    - "胃窦"
+    - "胃体"
+    - "贲门"
+  exclude_terms:
+    - "结肠"
+    - "直肠"
+    - "十二指肠"
+  text_split_pattern: "\\n|；|;|\\r"
+  allow_empty_include_terms: false
+
+privacy:
+  extra_patterns: []
+
+outputs:
+  output_dir: "outputs"
+  evidence_workbook: "evidence.xlsx"
+  questionnaire_workbook: "questionnaire.xlsx"
+  deck_outline_md: "deck_outline.md"
+  deck_outline_html: "deck_outline.html"
+  run_manifest: "run_manifest.json"
+  privacy_report: "privacy_report.json"
+  scan_log: "scan_log.csv"
+

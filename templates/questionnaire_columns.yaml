@@ -1,0 +1,24 @@
+director_choices:
+  - "同意推荐名"
+  - "建议兼容保留"
+  - "建议弃用"
+  - "需会议讨论"
+owner_choices:
+  - "确认标准名"
+  - "确认兼容保留"
+  - "退回会议讨论"
+  - "暂缓"
+columns:
+  - family_id
+  - category
+  - recommended_standard_name
+  - source_basis
+  - compatible_names
+  - deprecated_or_discuss
+  - company_counts
+  - conflict_summary
+  - deidentified_examples
+  - director_choice
+  - director_reason
+  - owner_confirmation
+
