@@ -11,7 +11,12 @@ https://github.com/zouxy111/pathology-term-consensus-kit
 2. 术语表，CSV/XLSX/XLSM。
 
 请严格执行：
-1. clone 仓库并安装。
+1. clone 仓库并轻量安装：
+   git clone https://github.com/zouxy111/pathology-term-consensus-kit
+   cd pathology-term-consensus-kit
+   uv venv || python3 -m venv .venv
+   uv pip install -e . || (. .venv/bin/activate && pip install -e .)
+   path-term-kit doctor
 2. 保存附件到临时目录，不要提交到 Git。
 3. 先运行：
    path-term-kit inspect-data <附件目录>
@@ -42,4 +47,3 @@ https://github.com/zouxy111/pathology-term-consensus-kit
 - 禁止把真实数据提交到 Git。
 - 禁止在字段未确认时手写 project.yaml。
 ```
-

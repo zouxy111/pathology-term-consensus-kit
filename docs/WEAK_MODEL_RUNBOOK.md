@@ -31,8 +31,11 @@ Install the runner only after the project skeleton exists:
 
 ```bash
 uv venv
-uv pip install -e ".[dev]"
+uv pip install -e .
+path-term-kit doctor
 ```
+
+If `doctor` fails, stop and report the exact output.
 
 ## Phase 2 — Configure
 

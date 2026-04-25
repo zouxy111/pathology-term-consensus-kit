@@ -21,7 +21,8 @@ git clone <your-repo-url>
 cd pathology-term-consensus-kit
 python scripts/bootstrap_project.py --out my_project
 uv venv
-uv pip install -e ".[dev]"
+uv pip install -e .
+path-term-kit doctor
 ```
 
 Edit `my_project/project.yaml`, put your data under `my_project/data/`, then run:

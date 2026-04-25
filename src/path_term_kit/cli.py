@@ -7,6 +7,7 @@ from pathlib import Path
 
 from .aggregate import aggregate_reports
 from .config import ConfigError, load_project_config, output_path
+from .doctor import run_doctor
 from .inspection import (
     inspect_data_dir,
     inspect_term_file,
@@ -43,6 +44,8 @@ def main(argv: list[str] | None = None) -> int:
 
     qa_parser = subparsers.add_parser("qa", help="Run privacy QA on generated outputs.")
     qa_parser.add_argument("config")
+
+    subparsers.add_parser("doctor", help="Run a lightweight self-check for low-resource agents.")
 
     inspect_data_parser = subparsers.add_parser(
         "inspect-data", help="Inspect uploaded report attachments before project config."
@@ -100,6 +103,8 @@ def main(argv: list[str] | None = None) -> int:
             return _cmd_run(args.config)
         if args.command == "qa":
             return _cmd_qa(args.config)
+        if args.command == "doctor":
+            return _cmd_doctor()
         if args.command == "inspect-data":
             return _cmd_inspect_data(
                 args.attachment_dir,
@@ -231,6 +236,14 @@ def _cmd_qa(config_path: str) -> int:
         return 1
     print("QA privacy scan: pass")
     return 0
+
+
+def _cmd_doctor() -> int:
+    result = run_doctor()
+    print("Path Term Kit doctor:")
+    for key, value in result.items():
+        print(f"- {key}: {value}")
+    return 0 if result.get("status") == "pass" else 1
 
 
 def _cmd_inspect_data(

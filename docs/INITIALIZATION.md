@@ -30,6 +30,13 @@ my_project/
 
 ```bash
 uv venv
+uv pip install -e .
+path-term-kit doctor
+```
+
+开发和测试仓库本身时再安装 dev 依赖：
+
+```bash
 uv pip install -e ".[dev]"
 ```
 

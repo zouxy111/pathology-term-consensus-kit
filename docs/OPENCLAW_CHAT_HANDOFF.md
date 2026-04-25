@@ -20,7 +20,8 @@
    git clone <仓库链接>
    cd pathology-term-consensus-kit
    uv venv || python3 -m venv .venv
-   uv pip install -e ".[dev]" || (. .venv/bin/activate && pip install -e ".[dev]")
+   uv pip install -e . || (. .venv/bin/activate && pip install -e .)
+   path-term-kit doctor
 
 2. 把聊天附件保存到临时工作区，不要提交到 Git。
 

@@ -46,6 +46,10 @@ def test_fake_example_runs_end_to_end(tmp_path: Path) -> None:
     assert privacy["status"] == "pass"
 
 
+def test_doctor_smoke_check_passes() -> None:
+    assert main(["doctor"]) == 0
+
+
 def test_questionnaire_has_fixed_choices(tmp_path: Path) -> None:
     config = copy_example(tmp_path)
     assert main(["run", str(config)]) == 0
