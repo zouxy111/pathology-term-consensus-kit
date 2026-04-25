@@ -34,7 +34,7 @@ path-term-kit qa my_project/project.yaml
 ```
 
 For chat-based OpenClaw reuse, send the public GitHub URL plus report/term attachments and ask it
-to follow `docs/OPENCLAW_CHAT_HANDOFF.md`.
+to follow `docs/OPENCLAW_ONE_SHOT_PROMPT.md`.
 
 Run the fake example:
 
@@ -76,6 +76,7 @@ path-term-kit init --out my_project
 - `examples/fake_subspecialty/` — public-safe fake data.
 - `docs/SOP.md` — reusable workflow.
 - `docs/OPENCLAW_CHAT_HANDOFF.md` — prompt and gate rules for cloud OpenClaw chat reuse.
+- `docs/OPENCLAW_ONE_SHOT_PROMPT.md` — shortest reusable prompt for non-technical users.
 - `docs/ATTACHMENT_CONTRACT.md` — attachment naming and data handoff contract.
 - `docs/WEAK_MODEL_RUNBOOK.md` — guardrails for weaker agents.
 - `skills/pathology-terminology-standardization/` — Codex skill wrapper.

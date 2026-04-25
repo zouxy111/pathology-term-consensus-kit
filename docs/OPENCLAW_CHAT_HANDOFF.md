@@ -24,7 +24,7 @@
 
 2. 把聊天附件保存到临时工作区，不要提交到 Git。
 
-3. 先扫描附件，不要直接运行主流程：
+3. 先扫描附件，不要直接运行主流程；`inspect-data` 默认会自动跳过疑似术语表：
    path-term-kit inspect-data <附件目录>
    path-term-kit inspect-terms <术语表文件>
 
@@ -37,7 +37,19 @@
    - 候选辅助上下文列
    - 术语表缺失字段或通过状态
 
-5. 等我确认字段映射、目标纳入词、排除词后，再生成 project.yaml。
+5. 等我确认字段映射、目标纳入词、排除词后，用 `create-project` 生成 project.yaml，不要手写 YAML：
+   path-term-kit create-project \
+     --out <project_dir> \
+     --term-file <术语表文件> \
+     --report-file <报告文件1> \
+     --report-file <报告文件2> \
+     --project-name "<项目名>" \
+     --subspecialty "<亚专科>" \
+     --company-field "<用户确认的子公司/实验室列>" \
+     --report-text-field "<用户确认的报告结果列>" \
+     --context-field "<辅助列1>" \
+     --include-term "<纳入词1>" \
+     --exclude-term "<排除词1>"
 
 6. 运行：
    path-term-kit validate <project>/project.yaml
@@ -63,8 +75,10 @@
 OpenClaw 必须遵守：
 
 - `inspect-data` 和 `inspect-terms` 先于 `project.yaml`。
-- 用户确认字段前不运行 `validate/run`。
+- 用户确认字段前不运行 `create-project/validate/run`。
+- 字段确认后用 `create-project` 生成配置，不要手写 YAML。
 - `validate/run/qa` 任一步失败都停止。
+- `package-results` 默认严格检查交付物，缺文件时必须停止。
 - 结果只通过 `outputs.zip` 和摘要回传。
 
 ## 公开仓库边界
@@ -84,4 +98,3 @@ OpenClaw 必须遵守：
 - 患者信息
 - 医院信息
 - token、cookie、账号密码
-

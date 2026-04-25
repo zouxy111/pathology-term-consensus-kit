@@ -7,7 +7,7 @@ When the user sends this repo link plus chat attachments:
 3. Run `path-term-kit inspect-data <attachment_dir>`.
 4. Run `path-term-kit inspect-terms <term_file>`.
 5. Ask the user to confirm company field, report text field, context fields, include terms, and exclude terms.
-6. Generate `project.yaml` only after confirmation.
+6. Generate `project.yaml` with `path-term-kit create-project` only after confirmation.
 7. Run `validate`, `scan`, `run`, `qa`, and `package-results`.
 8. Return a concise summary and `outputs.zip`.
 

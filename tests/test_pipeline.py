@@ -159,3 +159,72 @@ def test_package_results_creates_outputs_zip(tmp_path: Path) -> None:
         "privacy_report.json",
         "scan_log.csv",
     }.issubset(names)
+
+
+def test_inspect_data_auto_skips_term_catalog_when_mixed(tmp_path: Path) -> None:
+    attachments = tmp_path / "attachments"
+    attachments.mkdir()
+    shutil.copyfile(REPO_ROOT / "examples" / "fake_subspecialty" / "reports.csv", attachments / "reports.csv")
+    shutil.copyfile(REPO_ROOT / "examples" / "fake_subspecialty" / "terms.csv", attachments / "terms.csv")
+
+    assert main(["inspect-data", str(attachments)]) == 0
+
+    report = json.loads((attachments / "inspect_data_report.json").read_text(encoding="utf-8"))
+    assert report["discovered_file_count"] == 2
+    assert report["file_count"] == 1
+    assert report["total_rows"] == 8
+    assert report["skipped_files"][0]["reason"] == "looks_like_term_catalog"
+
+
+def test_create_project_from_confirmed_chat_fields_runs_pipeline(tmp_path: Path) -> None:
+    project = tmp_path / "created_project"
+    reports = REPO_ROOT / "examples" / "fake_subspecialty" / "reports.csv"
+    terms = REPO_ROOT / "examples" / "fake_subspecialty" / "terms.csv"
+
+    assert (
+        main(
+            [
+                "create-project",
+                "--out",
+                str(project),
+                "--term-file",
+                str(terms),
+                "--report-file",
+                str(reports),
+                "--project-name",
+                "聊天创建演示",
+                "--subspecialty",
+                "消化道",
+                "--company-field",
+                "最终检测子公司",
+                "--report-text-field",
+                "单一结果",
+                "--context-field",
+                "诊断",
+                "--context-field",
+                "送检材料",
+                "--include-term",
+                "胃",
+                "--include-term",
+                "胃窦",
+                "--include-term",
+                "胃体",
+                "--include-term",
+                "贲门",
+                "--exclude-term",
+                "结肠",
+            ]
+        )
+        == 0
+    )
+    assert (project / "project.yaml").exists()
+    assert main(["validate", str(project / "project.yaml")]) == 0
+    assert main(["run", str(project / "project.yaml")]) == 0
+    assert main(["package-results", str(project / "project.yaml")]) == 0
+    assert (project / "outputs" / "outputs.zip").exists()
+
+
+def test_package_results_fails_when_outputs_missing(tmp_path: Path) -> None:
+    config = copy_example(tmp_path)
+
+    assert main(["package-results", str(config)]) == 2

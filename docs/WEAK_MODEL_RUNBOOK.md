@@ -36,7 +36,19 @@ uv pip install -e ".[dev]"
 
 ## Phase 2 — Configure
 
-Edit only `project.yaml`.
+For chat attachments, prefer `create-project`; do not hand-write YAML unless the CLI cannot express the project:
+
+```bash
+path-term-kit create-project \
+  --out <project_dir> \
+  --term-file <term_file> \
+  --report-file <report_file> \
+  --company-field "<confirmed company field>" \
+  --report-text-field "<confirmed report text field>" \
+  --include-term "<target include term>"
+```
+
+If hand editing is necessary, edit only `project.yaml`.
 
 Checklist:
 
@@ -117,6 +129,8 @@ path-term-kit package-results <project_dir>/project.yaml
 ```
 
 Return `outputs/outputs.zip` plus a concise status summary.
+
+If `package-results` fails, do not create a manual zip; fix the missing output first.
 
 ## Human Handoff Summary
 

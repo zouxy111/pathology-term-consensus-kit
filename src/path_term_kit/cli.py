@@ -15,8 +15,9 @@ from .inspection import (
     write_inspection_json,
 )
 from .manifest import write_run_manifest
-from .package import package_outputs
+from .package import PackagingError, package_outputs
 from .privacy import scan_output_files, write_privacy_report
+from .project_builder import ProjectBuilderError, create_project_from_inputs
 from .scan import scan_report_inputs, write_scan_log
 from .term_catalog import TermCatalogError, load_term_catalog
 from .outputs.deck import write_deck_outline
@@ -49,6 +50,11 @@ def main(argv: list[str] | None = None) -> int:
     inspect_data_parser.add_argument("attachment_dir")
     inspect_data_parser.add_argument("--max-examples", type=int, default=3)
     inspect_data_parser.add_argument("--json-output")
+    inspect_data_parser.add_argument(
+        "--include-term-tables",
+        action="store_true",
+        help="Do not auto-skip files that look like terminology catalogs.",
+    )
 
     inspect_terms_parser = subparsers.add_parser(
         "inspect-terms", help="Inspect a terminology table before running the SOP."
@@ -61,6 +67,26 @@ def main(argv: list[str] | None = None) -> int:
     )
     package_parser.add_argument("config")
     package_parser.add_argument("--out")
+    package_parser.add_argument(
+        "--allow-missing",
+        action="store_true",
+        help="Create a zip even if some expected outputs are missing.",
+    )
+
+    create_parser = subparsers.add_parser(
+        "create-project", help="Create project.yaml from chat-confirmed fields and attachments."
+    )
+    create_parser.add_argument("--out", required=True)
+    create_parser.add_argument("--term-file", required=True)
+    create_parser.add_argument("--report-file", action="append", required=True)
+    create_parser.add_argument("--project-name", default="病理亚专科术语标准化项目")
+    create_parser.add_argument("--subspecialty", default="待确认亚专科")
+    create_parser.add_argument("--company-field", required=True)
+    create_parser.add_argument("--report-text-field", required=True)
+    create_parser.add_argument("--context-field", action="append", default=[])
+    create_parser.add_argument("--company", action="append", default=[])
+    create_parser.add_argument("--include-term", action="append", required=True)
+    create_parser.add_argument("--exclude-term", action="append", default=[])
 
     args = parser.parse_args(argv)
     try:
@@ -75,12 +101,19 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "qa":
             return _cmd_qa(args.config)
         if args.command == "inspect-data":
-            return _cmd_inspect_data(args.attachment_dir, args.max_examples, args.json_output)
+            return _cmd_inspect_data(
+                args.attachment_dir,
+                args.max_examples,
+                args.json_output,
+                include_term_tables=args.include_term_tables,
+            )
         if args.command == "inspect-terms":
             return _cmd_inspect_terms(args.term_file, args.json_output)
         if args.command == "package-results":
-            return _cmd_package_results(args.config, args.out)
-    except (ConfigError, TermCatalogError) as exc:
+            return _cmd_package_results(args.config, args.out, allow_missing=args.allow_missing)
+        if args.command == "create-project":
+            return _cmd_create_project(args)
+    except (ConfigError, TermCatalogError, PackagingError, ProjectBuilderError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
     return 2
@@ -200,9 +233,16 @@ def _cmd_qa(config_path: str) -> int:
     return 0
 
 
-def _cmd_inspect_data(attachment_dir: str, max_examples: int, json_output: str | None) -> int:
+def _cmd_inspect_data(
+    attachment_dir: str,
+    max_examples: int,
+    json_output: str | None,
+    include_term_tables: bool = False,
+) -> int:
     directory = Path(attachment_dir).expanduser().resolve()
-    report = inspect_data_dir(directory, max_examples=max_examples)
+    report = inspect_data_dir(
+        directory, max_examples=max_examples, skip_term_like=not include_term_tables
+    )
     output_path = Path(json_output).expanduser().resolve() if json_output else directory / "inspect_data_report.json"
     write_inspection_json(report, output_path)
     print(render_data_inspection_for_chat(report))
@@ -221,11 +261,33 @@ def _cmd_inspect_terms(term_file: str, json_output: str | None) -> int:
     return 0 if report.status == "pass" else 1
 
 
-def _cmd_package_results(config_path: str, zip_output: str | None) -> int:
+def _cmd_package_results(config_path: str, zip_output: str | None, allow_missing: bool = False) -> int:
     config = load_project_config(config_path)
     zip_path = Path(zip_output).expanduser().resolve() if zip_output else None
-    result_path = package_outputs(config, zip_path=zip_path)
+    result_path = package_outputs(config, zip_path=zip_path, strict=not allow_missing)
     print(f"Packaged outputs: {result_path}")
+    return 0
+
+
+def _cmd_create_project(args: argparse.Namespace) -> int:
+    created = create_project_from_inputs(
+        out_dir=Path(args.out),
+        term_file=Path(args.term_file),
+        report_files=[Path(path) for path in args.report_file],
+        project_name=args.project_name,
+        subspecialty=args.subspecialty,
+        company_field=args.company_field,
+        report_text_field=args.report_text_field,
+        context_fields=args.context_field,
+        companies=args.company,
+        include_terms=args.include_term,
+        exclude_terms=args.exclude_term,
+    )
+    print(f"Created project: {created.project_dir}")
+    print(f"Config: {created.config_path}")
+    print(f"Term catalog: {created.term_catalog}")
+    for report in created.reports:
+        print(f"Report: {report}")
     return 0
 
 

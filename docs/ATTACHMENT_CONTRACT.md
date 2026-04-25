@@ -50,6 +50,7 @@ path-term-kit inspect-terms <term_file>
 - 候选子公司/实验室列
 - 候选报告结果列
 - 候选辅助上下文列
+- 自动跳过的疑似术语表
 
 用户确认前，OpenClaw 不得生成 `project.yaml`。
 
@@ -68,6 +69,26 @@ OpenClaw 必须向用户确认：
 ```
 
 如果用户说“不对”，OpenClaw 要重新展示候选列和脱敏示例，不得猜测。
+
+## 生成配置
+
+字段确认后，OpenClaw 应使用 `create-project` 自动生成配置，不要手写 YAML：
+
+```bash
+path-term-kit create-project \
+  --out <project_dir> \
+  --term-file <term_file> \
+  --report-file <report_file> \
+  --project-name "<项目名>" \
+  --subspecialty "<亚专科>" \
+  --company-field "<子公司/实验室列>" \
+  --report-text-field "<报告结果列>" \
+  --context-field "<辅助列>" \
+  --include-term "<纳入词>" \
+  --exclude-term "<排除词>"
+```
+
+如果用户没有提供公司列表，工具会从已确认的公司字段中自动推断。
 
 ## 术语表要求
 
@@ -95,4 +116,3 @@ family_id,category,standard_name,source_basis,compatible_names,deprecated_or_dis
 - `run_manifest.json`
 - `privacy_report.json`
 - `scan_log.csv`
-

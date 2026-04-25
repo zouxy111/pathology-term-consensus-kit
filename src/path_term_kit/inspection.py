@@ -20,7 +20,9 @@ class InspectionReport:
     payload: dict[str, Any]
 
 
-def inspect_data_dir(attachment_dir: Path, max_examples: int = 3) -> InspectionReport:
+def inspect_data_dir(
+    attachment_dir: Path, max_examples: int = 3, skip_term_like: bool = True
+) -> InspectionReport:
     attachment_dir = attachment_dir.expanduser().resolve()
     files = sorted(
         path
@@ -30,9 +32,11 @@ def inspect_data_dir(attachment_dir: Path, max_examples: int = 3) -> InspectionR
     payload: dict[str, Any] = {
         "attachment_dir": str(attachment_dir),
         "status": "pass",
-        "file_count": len(files),
+        "discovered_file_count": len(files),
+        "file_count": 0,
         "total_rows": 0,
         "files": [],
+        "skipped_files": [],
         "candidate_fields": {},
         "errors": [],
     }
@@ -47,6 +51,14 @@ def inspect_data_dir(attachment_dir: Path, max_examples: int = 3) -> InspectionR
 
     header_counter: Counter[str] = Counter()
     for file_path in files:
+        if skip_term_like and looks_like_term_catalog(file_path):
+            payload["skipped_files"].append(
+                {
+                    "path": str(file_path),
+                    "reason": "looks_like_term_catalog",
+                }
+            )
+            continue
         file_payload = {"path": str(file_path), "tables": []}
         table_examples: dict[str, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))
         final_logs = []
@@ -76,8 +88,11 @@ def inspect_data_dir(attachment_dir: Path, max_examples: int = 3) -> InspectionR
             if log.error:
                 payload["errors"].append(f"{file_path.name}::{log.table}: {log.error}")
         payload["files"].append(file_payload)
+        payload["file_count"] += 1
 
     payload["candidate_fields"] = suggest_field_mapping(list(header_counter))
+    if payload["file_count"] == 0:
+        payload["errors"].append("No report-like data files found after skipping term-like tables.")
     if payload["errors"]:
         payload["status"] = "fail"
     return InspectionReport(status=str(payload["status"]), payload=payload)
@@ -146,6 +161,10 @@ def render_data_inspection_for_chat(report: InspectionReport) -> str:
     ]
     if payload["errors"]:
         lines.extend(["- 错误：", *[f"  - {error}" for error in payload["errors"]]])
+    if payload.get("skipped_files"):
+        lines.append("- 已自动跳过疑似术语表：")
+        for item in payload["skipped_files"]:
+            lines.append(f"  - {Path(item['path']).name} ({item['reason']})")
     lines.append("")
     lines.append("## 候选字段")
     candidates = payload.get("candidate_fields", {})
@@ -218,3 +237,15 @@ def _score_headers(headers: list[str], keywords: tuple[str, ...]) -> list[str]:
     scored.sort(key=lambda item: (-item[0], item[1], item[2]))
     return [item[2] for item in scored[:8]]
 
+
+def looks_like_term_catalog(path: Path) -> bool:
+    try:
+        headers_info = read_headers(path)
+    except Exception:
+        return False
+    for _, headers, error in headers_info:
+        if error:
+            continue
+        if set(REQUIRED_TERM_FIELDS).issubset(set(headers)):
+            return True
+    return False

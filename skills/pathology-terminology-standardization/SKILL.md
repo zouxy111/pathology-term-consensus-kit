@@ -19,7 +19,7 @@ path-term-kit inspect-terms <term_file>
 ```
 
 4. Ask the user to confirm field mapping and target include/exclude terms.
-5. Configure `project.yaml`; do not hardcode local paths into code.
+5. Use `path-term-kit create-project` after field confirmation; do not hand-write YAML unless necessary.
 6. Run the CLI in order:
 
 ```bash
