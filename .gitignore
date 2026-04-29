@@ -12,3 +12,6 @@ build/
 /my_project/
 examples/**/outputs/
 *.log
+
+# Local source-derived examples; do not publish without rights review
+local_examples/
