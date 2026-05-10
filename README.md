@@ -14,7 +14,26 @@ The kit turns a terminology source table plus historical report exports into:
 It is designed for repeatable agent execution: deterministic Python code does the fragile work,
 while the bundled Codex skill and weak-model runbook keep the agent on a narrow, auditable path.
 
-## Quick Start
+## I only use chat / cloud OpenClaw
+
+If you use cloud OpenClaw through Feishu, Telegram, WeChat, or another chat client, you do **not**
+need to install anything locally.
+
+Start here:
+
+- [`CHAT-ONLY-START-HERE.md`](CHAT-ONLY-START-HERE.md) — copy one prompt, upload report data and a terminology table, then let OpenClaw inspect the attachments and ask you to confirm fields.
+- [`docs/OPENCLAW_ONE_SHOT_PROMPT.md`](docs/OPENCLAW_ONE_SHOT_PROMPT.md) — shortest prompt for chat-only reuse.
+- [`docs/ATTACHMENT_CONTRACT.md`](docs/ATTACHMENT_CONTRACT.md) — what files to upload and how OpenClaw should handle them.
+
+Expected chat flow:
+
+1. User sends the GitHub URL and uploads report/term attachments.
+2. OpenClaw clones this repo and runs `inspect-data` / `inspect-terms`.
+3. OpenClaw asks the user to confirm field mapping and include/exclude terms.
+4. OpenClaw runs the deterministic CLI pipeline.
+5. OpenClaw returns a short summary plus `outputs.zip`.
+
+## Developer / local CLI quick start
 
 ```bash
 git clone <your-repo-url>
@@ -33,9 +52,6 @@ path-term-kit scan my_project/project.yaml
 path-term-kit run my_project/project.yaml
 path-term-kit qa my_project/project.yaml
 ```
-
-For chat-based OpenClaw reuse, send the public GitHub URL plus report/term attachments and ask it
-to follow `docs/OPENCLAW_ONE_SHOT_PROMPT.md`.
 
 Run the fake example:
 
@@ -75,6 +91,7 @@ path-term-kit init --out my_project
 - `src/path_term_kit/` — CLI and deterministic SOP pipeline.
 - `templates/project.yaml` — reusable config template.
 - `examples/fake_subspecialty/` — public-safe fake data.
+- `CHAT-ONLY-START-HERE.md` — top-level entry for non-technical chat-only OpenClaw users.
 - `docs/SOP.md` — reusable workflow.
 - `docs/OPENCLAW_CHAT_HANDOFF.md` — prompt and gate rules for cloud OpenClaw chat reuse.
 - `docs/OPENCLAW_ONE_SHOT_PROMPT.md` — shortest reusable prompt for non-technical users.

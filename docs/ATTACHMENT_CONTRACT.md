@@ -2,6 +2,19 @@
 
 本协议用于用户把数据通过聊天软件发给云端 OpenClaw。真实数据只进入云端临时工作区，不进入 Git 仓库。
 
+## 非技术用户上传前清单
+
+发送给 OpenClaw 前，请确认：
+
+- [ ] 已准备历史报告数据表，不是截图。
+- [ ] 历史报告表里有子公司/实验室/机构列。
+- [ ] 历史报告表里有最终报告结果或病理诊断文本列。
+- [ ] 已准备结构化术语表，不是 WHO/CAP/PDF 原文全文。
+- [ ] 术语表包含 `family_id`、`standard_name`、`patterns` 等必填字段。
+- [ ] 文件格式是 `.csv`、`.xlsx` 或 `.xlsm`。
+- [ ] 如果文件很多，已打包成一个 zip，并按 reports/ 与 terms/ 分目录。
+- [ ] 已理解 OpenClaw 会先扫描并让你确认字段，字段确认前不会生成问卷。
+
 ## 用户需要上传什么
 
 至少两类附件：
@@ -32,12 +45,14 @@ attachments/
     terms.csv
 ```
 
+注意：`path-term-kit inspect-data` 不直接读取 zip。OpenClaw 收到 zip 后必须先解压，再扫描解压后的目录。
+
 ## OpenClaw 必须先扫描
 
 收到附件后，OpenClaw 先运行：
 
 ```bash
-path-term-kit inspect-data <attachment_dir>
+path-term-kit inspect-data <解压后的附件目录或报告附件目录>
 path-term-kit inspect-terms <term_file>
 ```
 
